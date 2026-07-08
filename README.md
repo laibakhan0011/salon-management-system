@@ -4,11 +4,11 @@ A desktop Salon Management System built with **Python (Tkinter)** for the interf
 
 ## Features
 
-- 🎨 Custom-designed Tkinter login screen with a salon-themed UI
-- 🔐 Secure authentication using **bcrypt** password hashing (passwords are never stored or compared in plain text)
-- 🗄️ Live connection to a SQL Server database (Windows Authentication)
-- 👥 Role-based access — **Admin** and **Receptionist** users are routed to different dashboards after login
-- 🧱 Clean project structure separating UI, database connection, and authentication logic
+- Custom-designed Tkinter login screen with a salon-themed UI
+-  Secure authentication using **bcrypt** password hashing (passwords are never stored or compared in plain text)
+-  Live connection to a SQL Server database (Windows Authentication)
+-  Role-based access — **Admin** and **Receptionist** users are routed to different dashboards after login
+-  Clean project structure separating UI, database connection, and authentication logic
 
 ## Tech Stack
 
@@ -64,9 +64,9 @@ CREATE TABLE Users (
    pip install pyodbc bcrypt
    ```
 
-3. Create the `Users` table in your SQL Server database (see the SQL above).
+3. Create the `Users` table in SQL Server database .
 
-4. Update the connection details in `db_connection.py` if your server or database name is different from the default.
+4. Update the connection details in `db_connection.py` 
 
 5. (Optional) Seed test users:
    ```
