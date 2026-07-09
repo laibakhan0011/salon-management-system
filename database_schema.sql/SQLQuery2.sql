@@ -6,3 +6,5 @@ CREATE TABLE Users (
     Password VARCHAR(255) NOT NULL,         -- will store bcrypt HASH, not plain text
     Role VARCHAR(20) NOT NULL CHECK (Role IN ('Admin', 'Receptionist'))
 );
+
+select * from users

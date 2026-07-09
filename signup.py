@@ -72,6 +72,10 @@ def open_signup_window(parent=None):
             messagebox.showerror("Signup Failed", "Password must be at least 6 characters.")
             return
 
+        if role not in ("Admin", "Receptionist"):
+            messagebox.showerror("Signup Failed", "Invalid role selected.")
+            return
+
         success, message = create_account(username, email, password, role)
 
         if success:
