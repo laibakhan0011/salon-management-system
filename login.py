@@ -3,6 +3,7 @@ from tkinter import messagebox
 from auth import verify_login
 from signup import open_signup_window
 from customer_login import open_customer_login_window
+from dashboard_screen import open_dashboard
 
 
 def handle_login():
@@ -17,32 +18,12 @@ def handle_login():
 
     if role is None:
         messagebox.showerror("Login Failed", "Invalid username or password.")
-    elif role == "Admin":
+    elif role in ("Admin", "Receptionist"):
         messagebox.showinfo("Login Successful", f"Welcome! Logged in as {role}.")
         root.withdraw()  # hide login window instead of destroying the only Tk root
-        open_admin_dashboard()
-    elif role == "Receptionist":
-        messagebox.showinfo("Login Successful", f"Welcome! Logged in as {role}.")
-        root.withdraw()
-        open_receptionist_dashboard()
+        open_dashboard(root, role)
     else:
         messagebox.showerror("Login Failed", f"Unrecognized role '{role}'. Please contact an administrator.")
-
-
-def open_admin_dashboard():
-    admin_win = tk.Toplevel(root)
-    admin_win.title("Admin Dashboard")
-    admin_win.geometry("800x600")
-    tk.Label(admin_win, text="Welcome, Admin!", font=("Arial", 20)).pack(pady=50)
-    admin_win.protocol("WM_DELETE_WINDOW", root.destroy)
-
-
-def open_receptionist_dashboard():
-    reception_win = tk.Toplevel(root)
-    reception_win.title("Receptionist Dashboard")
-    reception_win.geometry("800x600")
-    tk.Label(reception_win, text="Welcome, Receptionist!", font=("Arial", 20)).pack(pady=50)
-    reception_win.protocol("WM_DELETE_WINDOW", root.destroy)
 
 
 root = tk.Tk()
