@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 from db_connection import get_connection
 from datetime import date
+from new_appointment_screen import open_new_appointment_screen
+from payment_screen import open_payment_screen
 
 
 def open_dashboard(root, role):
@@ -104,6 +106,17 @@ def open_dashboard(root, role):
         font=("Arial", 11), width=15, command=refresh_all
     )
     refresh_btn.pack(pady=10)
+
+    # ---- New Appointment / Payment buttons ----
+    tk.Button(
+        dash_win, text='New Appointment', bg="#3B3B3B", fg="white",
+        font=("Arial", 11), width=18, command=lambda: open_new_appointment_screen(root)
+    ).pack(pady=5)
+
+    tk.Button(
+        dash_win, text='Process Payment', bg="#3B3B3B", fg="white",
+        font=("Arial", 11), width=18, command=lambda: open_payment_screen(root)
+    ).pack(pady=5)
 
     # Load data immediately when dashboard opens
     refresh_all()

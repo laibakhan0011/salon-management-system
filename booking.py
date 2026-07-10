@@ -68,3 +68,86 @@ def create_appointment(customer_id, staff_id, service_id, package_id, appt_date,
     finally:
         cursor.close()
         conn.close()
+
+
+def get_all_customers():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT CustomerID, FirstName + ' ' + LastName FROM Customer")
+    customers = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return customers
+
+
+def get_all_staff():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT StaffID, FirstName + ' ' + LastName, StaffType FROM Staff")
+    staff = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return staff
+
+
+def book_appointment_via_procedure(customer_id, staff_id, service_id, appt_date, appt_time, price, payment_method):
+    """Calls the BookAppointment stored procedure (handles appointment + payment as one transaction)."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            """EXEC BookAppointment 
+               @CustomerID=?, @StaffID=?, @ServiceID=?, 
+               @AppointmentDate=?, @AppointmentTime=?, @FinalPrice=?, @PaymentMethod=?""",
+            (customer_id, staff_id, service_id, appt_date, appt_time, price, payment_method)
+        )
+        row = cursor.fetchone()
+        conn.commit()
+        if row and row[0] == 'Success':
+            return True, row[1]  # AppointmentID
+        else:
+            return False, row[1] if row else "Unknown error"
+    except Exception as e:
+        return False, str(e)
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def get_pending_appointments():
+    """Appointments that still need payment finalized."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        """SELECT A.AppointmentID, C.FirstName + ' ' + C.LastName, A.FinalPrice
+           FROM Appointment A
+           JOIN Customer C ON A.CustomerID = C.CustomerID
+           WHERE A.Status = 'Pending'"""
+    )
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return rows
+
+
+def finalize_payment(appointment_id, final_total, payment_method):
+    """Updates the Payment amount/method and marks the Appointment Completed, in one transaction."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "UPDATE Payment SET Amount = ?, PaymentMethod = ? WHERE AppointmentID = ?",
+            (final_total, payment_method, appointment_id)
+        )
+        cursor.execute(
+            "UPDATE Appointment SET Status = 'Completed' WHERE AppointmentID = ?",
+            (appointment_id,)
+        )
+        conn.commit()
+        return True, "Payment finalized successfully."
+    except Exception as e:
+        conn.rollback()
+        return False, str(e)
+    finally:
+        cursor.close()
+        conn.close()
